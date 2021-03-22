@@ -9,7 +9,7 @@ on:
 
 jobs:
   tests:
-    if: "github.repository == 'qutebrowser/qutebrowser'"
+    if: "github.repository == 'qutebrowser/experiments'"
     runs-on: ubuntu-20.04
     timeout-minutes: 30
     container:
@@ -33,7 +33,7 @@ jobs:
     continue-on-error: true
     runs-on: ubuntu-20.04
     needs: [tests]
-    if: "always() && github.repository == 'qutebrowser/qutebrowser'"
+    if: "always() && github.repository == 'qutebrowser/experiments'"
     steps:
       - name: Send success IRC notification
         uses: Gottox/irc-message-action@v1
