@@ -1,4 +1,4 @@
-name: Bleeding-edge test
+name: Bleeding-edge CI
 
 on:
   workflow_dispatch:
@@ -32,7 +32,7 @@ jobs:
     timeout-minutes: 2
     continue-on-error: true
     runs-on: ubuntu-20.04
-    needs: [docker]
+    needs: [tests]
     if: "always() && github.repository == 'qutebrowser/qutebrowser'"
     steps:
       - name: Send success IRC notification
