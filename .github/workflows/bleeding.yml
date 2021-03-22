@@ -3,7 +3,9 @@ name: Bleeding-edge test
 on:
   workflow_dispatch:
   schedule:
-    - cron: '21 10 * * *'
+    # Every Monday at 03:05 UTC
+    # https://crontab.guru/#05_03_*_*_1
+    - cron: '05 03 * * 1'
 
 jobs:
   tests:
