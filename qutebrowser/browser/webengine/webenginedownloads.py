@@ -29,7 +29,6 @@ from PyQt5.QtWebEngineWidgets import QWebEngineDownloadItem
 from qutebrowser.browser import downloads, pdfjs
 from qutebrowser.utils import (debug, usertypes, message, log, objreg, urlutils,
                                utils, version)
-from qutebrowser.config import config
 
 
 class DownloadItem(downloads.AbstractDownloadItem):
@@ -119,6 +118,10 @@ class DownloadItem(downloads.AbstractDownloadItem):
 
     def url(self) -> QUrl:
         return self._qt_item.url()
+
+    def origin(self) -> QUrl:
+        page = self._qt_item.page()
+        return page.url() if page else QUrl()
 
     def _set_fileobj(self, fileobj, *, autoclose=True):
         raise downloads.UnsupportedOperationError
@@ -252,7 +255,6 @@ class DownloadManager(downloads.AbstractDownloadManager):
         qt_filename = os.path.basename(qt_item.path())   # FIXME use 5.14 API
         mime_type = qt_item.mimeType()
         url = qt_item.url()
-        origin = qt_item.page().url() if qt_item.page() else QUrl()
 
         # WORKAROUND for https://bugreports.qt.io/browse/QTBUG-90355
         if version.qtwebengine_versions().webengine >= utils.VersionNumber(5, 15, 3):
@@ -294,18 +296,7 @@ class DownloadManager(downloads.AbstractDownloadManager):
             download.set_target(target)
             return
 
-        if url.scheme() == "file" and origin.isValid() and origin.scheme() == "file":
-            utils.open_file(url.toLocalFile())
-            qt_item.cancel()
-            return
-
-        if (url.scheme() == "http" and
-                origin.isValid() and origin.scheme() == "https" and
-                config.instance.get("downloads.prevent_mixed_content", url=origin)):
-            # FIXME show failed download instead
-            message.error("Aborting insecure download from secure page "
-                          "(see downloads.prevent_mixed_content).")
-            qt_item.cancel()
+        if download.cancel_for_origin():
             return
 
         # Ask the user for a filename - needs to be blocking!
