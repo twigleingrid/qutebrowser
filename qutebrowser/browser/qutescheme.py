@@ -596,6 +596,7 @@ def qute_resource(url: QUrl) -> _HandlerRet:
         raise NotFoundError(str(e))
     return mimetype, data
 
+
 @add_handler('start')
 def qute_start(url: QUrl) -> _HandlerRet:
     """Handler for qute://start."""
@@ -604,5 +605,9 @@ def qute_start(url: QUrl) -> _HandlerRet:
     quickmarks = sorted(objreg.get('quickmark-manager').marks.items(),
                         key=lambda x: x[0])  # Sort by name
     searchurl = config.val.url.searchengines['DEFAULT']
-    page = jinja.render('startpage.html',title='Welcome to qutebrowser',bookmarks=bookmarks,search_url=searchurl,quickmarks=quickmarks)
-    return 'text/html' , page
+    page = jinja.render('startpage.html',
+                        title='Welcome to qutebrowser',
+                        bookmarks=bookmarks,
+                        search_url=searchurl,
+                        quickmarks=quickmarks)
+    return 'text/html', page
