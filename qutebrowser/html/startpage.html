@@ -6,12 +6,10 @@ body {
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 .title {
-    /* color: #1f84bd; */
-    color: #cce1f7;
-    /* color: #000000; */
+    color: #c2e0ff;
 }
 h3 {
-    font-size: 45px;
+    font-size: 35px;
 }
 h6 {
     font-size: 20px;
@@ -22,15 +20,16 @@ h6 {
 a {
     text-decoration: none;
 }
-a:visited {
-    color: #9a9faa;
-}
 a:link {
-    color: #9a9faa;
+    color: #bdc4d4;
+}
+a:visited {
+    color: #bdc4d4;
 }
 
 .header {
-    margin-top: 60px;
+    margin-top: 80px;
+    margin-bottom: 40px;
 }
 
 .cards {
@@ -45,15 +44,15 @@ a:link {
     background-color: #222d32;
     border-radius: 8px;
     border-width: 1px;
-    box-shadow: 0px 4px 5px #171d20a8;
     border-style: solid;
-    margin: 30px;
+    margin: 15px 20px 15px 30px;
     padding: 10px;
 }
 h4 {
-    font-size: 30px;
+    font-size: 25px;
+    font-family: monospace;
     padding: 10px 10px 0 10px;
-    color: #5d86aa;
+    color: #84b4e6;
 }
 .getting-started-container {
     border-size: 3;
@@ -88,32 +87,29 @@ input {
     box-sizing: border-box;
     border: 1px solid transparent;
     border-radius: 8px;
-    box-shadow: 0px 4px 5px #171d2063;
-    background-color: #4c566a;
-    color: #b9c5de;
+    background-color: #4e4f63db;
+    color: #cce1f7;
 }
 
 input::placeholder {
-    color: #8f9191;
+    color: #bccbda;
 }
 
 .cards h4 {
     margin: 0;
 }
-{% endblock %}
 
-{% block script %}
-const searchUrl = "{{ search_url }}"
-function search(e) {
-    if (e.keyCode == 13) {
-	var val = document.getElementById("search-field").value;
-	window.open(searchUrl + val)
-    }
+.settings {
+    display: flex;
+    flex-flow: row-reverse;
+    margin: 15px;
 }
 {% endblock %}
 
-
 {% block content %}
+<div class="settings">
+<a href="qute://settings">⚙️</a>
+</div>
 <div class="header">
 <div class="title-container">
   <img src="https://qutebrowser.org/icons/qutebrowser.svg" class="logo">
@@ -122,7 +118,10 @@ function search(e) {
   </span>
 </div>
 <div class="search-box title-container" id="search">
-<input type="text" size="50" name="search-box" placeholder="Search..." onkeypress="return search(event)" id="search-field"/> 
+<form>
+<input type="text" size="50" name="q" placeholder="Search the web" id="search-field"/> 
+<input type="submit" style="display: none;" formaction="{{ search_url }}" formmethod="get" >
+</form>
 </div>
 </div>
 <div class="cards">
@@ -141,7 +140,7 @@ function search(e) {
   <h4>Quickmarks</h4>
   {% for quickmark in quickmarks %}
   <div class="bookmark-container">
-    <a class="bookmark-name" href="{{ quickmark[1] }}"> {{ quickmark[1] }} </a>
+    <a class="bookmark-name" href="{{ quickmark[1] }}"> {{ quickmark[0] }} </a>
   </div>
   {% endfor %}
 </div>
