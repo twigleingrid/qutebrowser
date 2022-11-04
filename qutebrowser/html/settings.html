@@ -10,6 +10,29 @@ var cset = function(option, value) {
   xhr.open("GET", url);
   xhr.send();
 }
+
+let findSetting = () => {
+    let searchQuery = document.getElementById("searchbox").value.toLowerCase()
+    let options = document.querySelectorAll(".options")
+
+    options.forEach(option => {
+        let id = option.id
+	let name = `name-${id}`
+	let nameElem = document.getElementById(name).textContent.toLowerCase()
+	let shortDesc = `short-desc-${id}`
+	let shortDescElem = document.getElementById(shortDesc).textContent.toLowerCase()
+	let longDesc = `long-desc-${id}`
+	let longDescElem = document.getElementById(longDesc)?.textContent.toLowerCase()
+
+	if (nameElem.includes(searchQuery) ||
+	  shortDescElem.includes(searchQuery) ||
+	  longDescElem?.includes(searchQuery)) {
+	    option.classList.remove("is-hidden")
+	} else {
+	    option.classList.add("is-hidden")
+	}
+    })
+}
 {% endblock %}
 
 {% block style %}
@@ -148,33 +171,39 @@ summary .short-description {
 summary::selection {
     background-color: inherit;
 }
+
+.is-hidden {
+    visibility: collapse;
+}
 {% endblock %}
 
 {% block content %}
 <noscript><h1 class="noscript">View Only</h1><p class="noscript-text">Changing settings requires javascript to be enabled!</p></noscript>
+<input type="search" id="searchbox" autocomplete="off" placeholder="Find setting" oninput="findSetting()">
 <table>
     <tr>
         <th>Setting</th>
         <th>Value</th>
     </tr>
   {% for option in configdata.DATA.values()|sort(attribute='name') if not option.no_autoconfig %}
-    <tr>
+    <tr class="options" id="{{ option.name }}">
       {% set loopIndex = loop.index0 %}
       <!-- FIXME: convert to string properly -->
-      <td class="setting">{{ option.name }}
+      <td class="setting">
+	<span id="name-{{ option.name}}">{{ option.name }}</span>
         {% if option.description %}
           {% set description = option.description.split('\n', 1) %}
           <div class="option-description">
             {% if description|length > 1 %}
               <details>
                 <summary>
-                  <p class="short-description">{{ description[0]|e }}</p>
+		  <p id="short-desc-{{ option.name }}" class="short-description">{{ description[0]|e }}</p>
                   <span class="details">Details</span>
                 </summary>
-                <p class="long-description">{{ description[1]|e }}</p>
+		<p id="long-desc-{{ option.name }}" class="long-description">{{ description[1]|e }}</p>
               </details>
             {% else %}
-              <p>{{ description[0]|e }}</p>
+              <p id="short-desc-{{ option.name }}" class="short-description">{{ description[0]|e }}</p>
             {% endif %}
           </div>
         {% endif %}
